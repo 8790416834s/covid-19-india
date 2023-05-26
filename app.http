@@ -4,7 +4,10 @@ GET http://localhost:3000/
 GET http://localhost:3000/states/
 ###
 
-GET http://localhost:3000/states/1/
+GET http://localhost:3000/states/8/
+###
+
+GET http://localhost:3000/districts/
 ###
 
 POST http://localhost:3000/districts/
@@ -20,7 +23,7 @@ Content-Type: application/json
 }
 ###
 
-GET http://localhost:3000/districts/322/
+GET http://localhost:3000/districts/284/
 ###
 
 DELETE http://localhost:3000/districts/322/
@@ -42,5 +45,5 @@ Content-Type: application/json
 GET http://localhost:3000/states/1/stats/
 ###
 
-GET http://localhost:3000/districts/322/details/
+GET http://localhost:3000/districts/10/details/
 ###
