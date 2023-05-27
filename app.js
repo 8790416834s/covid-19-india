@@ -126,26 +126,35 @@ app.put("/districts/:districtId/", async (request, response) => {
 //get individual total cases,cured,active,deaths
 app.get("/states/:stateId/stats/", async (request, response) => {
   const { stateId } = request.params;
-  const getStateQuery = `
-    SELECT SUM(district.cases) AS totalCases,
-      SUM(district.cured) AS totalCured,
-      SUM(district.active) AS totalActive,
-      SUM(district.deaths) AS totalDeaths
-    FROM district LEFT JOIN state
-        ON state.state_id = district.district_id
-    WHERE state_id = ${stateId};`;
-  const state = await db.get(getStateQuery);
-  response.send(convertDbObjectToResponseObject(state));
+  const getStateStatsQuery = `
+    SELECT 
+      SUM(cases),
+      SUM(cured),
+      SUM(active),
+      SUM(deaths)
+    FROM
+     district
+    WHERE
+     state_id = ${stateId};`;
+  const stats = await db.get(getStateStatsQuery);
+  response.send({
+    totalCases: stats["SUM(cases)"],
+    totalCured: stats["SUM(cured)"],
+    totalActive: stats["SUM(active)"],
+    totalDeaths: stats["SUM(deaths)"],
+  });
 });
 
 //get individual stateName
 app.get("/districts/:districtId/details/", async (request, response) => {
   const { districtId } = request.params;
-  const getDistrictQuery = `
-    SELECT DISTINCT state.state_name AS stateName
-     FROM district LEFT JOIN state
-     ON state.state_id = district.state_id
+  const getDistrictIdQuery = `
+    SELECT state_id FROM district
     WHERE district_id = ${districtId};`;
-  const state = await db.get(getDistrictQuery);
-  response.send(convertDbObjectToResponseObject(state));
+  const getDistrictIdQueryResponse = await db.get(getDistrictIdQuery);
+  const getStateNameQuery = `
+    SELECT state_name AS stateName FROM state
+    WHERE state_id = ${getDistrictIdQueryResponse.state_id};`;
+  const getStateNameQueryResponse = await db.get(getStateNameQuery);
+  response.send(getStateNameQueryResponse);
 });
